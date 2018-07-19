@@ -1,6 +1,18 @@
 #!/usr/bin/python
 # for making executable
 
+#########################################################################
+###############   Raspberry Pi Train Time Display   #####################
+#########################################################################
+
+# Originally from https://github.com/semicertain/Train-Times
+# Questions? Email: me [at] semicertain.com
+
+# This code will turn your Raspberry Pi into a display showing the times 
+# for the next two westbound greenline trains coming to the Prospect Park 
+# station in Minneapolis. 
+
+# The graphics work was done relying heavily on this resource:
 # http://programarcadegames.com/index.php?chapter=introduction_to_graphics
 
 # Make sure to install 'lxml', 'requests', and 'pygame'
