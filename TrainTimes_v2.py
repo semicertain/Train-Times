@@ -27,18 +27,20 @@ import datetime
 import requests
 import subprocess       # for terminal commands (turing screen off)
 from lxml import html
-import pygame
 # Import a library of functions called 'pygame'
-pygame.init()
+import pygame
 # Initialize the game engine
+pygame.init()
 
-WIDTH = 1360
-HEIGHT = 768
+# Find screen resolution
+screenInfo = pygame.display.Info()
+WIDTH  = screenInfo.current_w
+HEIGHT = screenInfo.current_h
+
+# Set fullscreen size
 size = (WIDTH, HEIGHT)
 screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 pygame.display.set_caption("Train Times")
-
-#pygame.display.set_mode(size, pygame.FULLSCREEN)
 
 # colors
 BLACK = (0, 0, 0)
