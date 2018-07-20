@@ -25,9 +25,8 @@
 
 #########################################################################
 # Setup
-
-import datetime
-import requests
+import datetime         # for getting the date and time
+import requests         # for getting data from webpages
 import subprocess       # for terminal commands (turing screen off)
 from lxml import html
 # Import a library of functions called 'pygame'
@@ -47,18 +46,18 @@ pygame.display.set_caption("Train Times")
 
 # Define constants for the graphics
 #   There are 7 lines of text and 9 spacers between them
-#   Text is twice as high as a spacer, so need 16 units
-SPACER = int(HEIGHT / 16) # needs to be an integer
+#   Text is twice as high as a spacer, so need 7*2 + 9 = 23 units
+SPACER = int(HEIGHT / 23) # needs to be an integer
 TEXT_H = SPACER * 2
 
 # Define lines upon which text will appear
-LINE1 = SPACER #10 # Current date and current time
-LINE2 = LINE1 + TEXT_H + SPACER
-LINE3 = LINE2 + TEXT_H + SPACER #200 # Station
-LINE4 = LINE3 + TEXT_H + SPACER #330 # Connection error
-LINE5 = LINE4 + TEXT_H + SPACER #400 # Track
-LINE6 = LINE5 + TEXT_H + SPACER #530 # NextTrain and Arrival Time
-LINE7 = LINE6 + TEXT_H + SPACER #660 # NextNextTrain and Arrival Time
+LINE1 = SPACER                  # Current date and current time
+LINE2 = LINE1 + TEXT_H + SPACER # This line intentionally left blark
+LINE3 = LINE2 + TEXT_H + SPACER # Station
+LINE4 = LINE3 + TEXT_H + SPACER # Connection error
+LINE5 = LINE4 + TEXT_H + SPACER # Track
+LINE6 = LINE5 + TEXT_H + SPACER # NextTrain and Arrival Time
+LINE7 = LINE6 + TEXT_H + SPACER # NextNextTrain and Arrival Time
 
 # Define colors
 BLACK = (0, 0, 0)
@@ -66,15 +65,21 @@ YELLOW = (204, 184, 55)
 WHITE = (255, 255, 255)
 
 ##########################################################################
-# Program 
+# Program
+
+# Originally from https://github.com/semicertain/Train-Times
+# Questions? Email: me [at] semicertain.com
+
+# Define initial conditions
 done = False
 refresh = True
 count = 0
 clock = pygame.time.Clock()
+
+# Enter main loop
 while not done:
     
     while refresh == False and done == False:
-        #subprocess.call('xset dpms force off', shell=True)
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 refresh = True
@@ -97,93 +102,103 @@ while not done:
         response = requests.get("https://www.metrotransit.org")
         connection = True
     
-        # Scraping the train times
+####### Scraping the train times
+        # Go to Metro Transit's NexTrip page with parameters to specify route, direction, and stop
         page = requests.get("https://www.metrotransit.org/NexTripBadge.aspx?route=902&direction=3&stop=PSPK")
-        # go to Metro Transit's NexTrip page with parameters to specify route, direction, and stop
+        # Scrap the html contents from that page
         data = html.fromstring(page.content)
-        # scrap the html contents from that page
+        # Use inspector to find element's class name then
+        #   follow the guide on this webpage to construct the xpath:
+        #   http://python-guide-pt-br.readthedocs.io/en/latest/scenarios/scrape/
         firstTrain = data.xpath('//*[@id="NexTripControl1_NexTripResults1_departures"]/div[1]/span[3]/text()')
         secondTrain = data.xpath('//*[@id="NexTripControl1_NexTripResults1_departures"]/div[2]/span[3]/text()')
-        # Use inspector to find element's class name then
-        # follow the guide on this webpage to construct the xpath:
-        # http://python-guide-pt-br.readthedocs.io/en/latest/scenarios/scrape/
+        
     except requests.ConnectionError:
         connection = False
         firstTrain = "N/A"
         secondTrain = "N/A"
 
+    # Fill screen background
     screen.fill(BLACK)
 
-    # Select the font to use, size, bold, italics
-    font = pygame.font.SysFont('roboto', 75, True, False)
+    # Select the (font to use, size, bold, italics)
+    font = pygame.font.SysFont('monospace', TEXT_H, True, False)
  
     # Render the text. "True" means anti-aliased text.
-    # Black is the color. The variable BLACK was defined
-    # above as a list of [0, 0, 0]
-    # Note: This line creates an image of the letters,
-    # but does not put it on the screen yet.
+    #   Black is the color. The variable BLACK was defined
+    #   above as a list of [0, 0, 0]
+    #   Note: This line creates an image of the letters,
+    #   but does not put it on the screen yet.
     station = font.render("PROSPECT  PARK  STATION", True, YELLOW)
     track1 = font.render("TRACK  1", True, YELLOW)
     connectionLost = font.render("CONNECTION LOST", True, WHITE)
  
     # Put the image of the text on the screen at 250x250
-    screen.blit(station, [0, LINE3])
-    screen.blit(track1, [0, LINE5])
+    screen.blit(station, [SPACER, LINE3])
+    screen.blit(track1, [SPACER, LINE5])
     if connection == False:
-        screen.blit(connectionLost, [0, LINE4])
+        screen.blit(connectionLost, [SPACER, LINE4])
 
-    # counter
+    # Counter
+    #   For turning off the screen after a period of time
     count = count + 1
-    counter = font.render(str(count), True, WHITE)
-    #screen.blit(counter, [0, 300])
+    #   counter = font.render(str(count), True, WHITE)
+    #   screen.blit(counter, [0, 300])
 
-    # current time
-    currentTime = datetime.datetime.now().strftime("%I:%M %p") # I-12 hour, H-24 hour
+    # Blinking time
+    #   The ':' in the middle of the time will blink every other refresh
+    #   This works best with a monospaced font
+    if count%2==0:
+        timeFormat = "%I %M %p" # I-12 hour, H-24 hour
+    else:
+        timeFormat = "%I:%M %p" # I-12 hour, H-24 hour
+
+    # Current time
+    currentTime = datetime.datetime.now().strftime(timeFormat) 
     currentTime = font.render(currentTime, True, YELLOW)
     time_rect = currentTime.get_rect() # for right align
-    time_rect.right = WIDTH-90
+    time_rect.right = WIDTH-SPACER
     time_rect.top = LINE1
     screen.blit(currentTime, time_rect)
 
-    # blinking time
-    # the ':' in the middle of the time will blink every other refresh
-    if count%2==0:
-        pygame.draw.rect(screen, BLACK, (1035, LINE1+25, 15, 60))
-        # if on 24 hour time, change to (1165, LINE1+25, 15, 60)
-
-    # current date
+    # Current date
     currentDate = datetime.datetime.now().strftime("%a, %d %b %Y")
     currentDate = font.render(currentDate.upper(), True, YELLOW)
-    screen.blit(currentDate, [0, LINE1])
+    screen.blit(currentDate, [SPACER, LINE1])
     
-    # next trains
+    # Next trains
     nextTrain = font.render("GREEN     MINNEAPOLIS", True, YELLOW)
-    screen.blit(nextTrain, [0, LINE6])
+    screen.blit(nextTrain, [SPACER, LINE6])
     nextNextTrain = font.render("GREEN     MINNEAPOLIS", True, YELLOW)
-    screen.blit(nextNextTrain, [0, LINE7])
+    screen.blit(nextNextTrain, [SPACER, LINE7])
 
-    # arrival times
+    # Arrival times
     nextTime = font.render(firstTrain[0].upper(), True, YELLOW)
     text_rect1 = nextTime.get_rect()
-    text_rect1.right = WIDTH-90
+    text_rect1.right = WIDTH-SPACER
     text_rect1.top = LINE6
     screen.blit(nextTime, text_rect1)
     
     nextNextTime = font.render(secondTrain[0].upper(), True, YELLOW)
     text_rect2 = nextNextTime.get_rect()
-    text_rect2.right = WIDTH-90
+    text_rect2.right = WIDTH-SPACER
     text_rect2.top = LINE7
     screen.blit(nextNextTime, text_rect2)
 
+    # Update screen
+    pygame.display.flip() 
 
-    pygame.display.flip() # update screen
+    # Limit rate of update to (X) times a second
+    clock.tick(1) 
 
-    clock.tick(1) # limit to (X) fps
-
-    # auto turn off display
-    if count == 200: # (300) roughly the number of seconds before auto-off
+    # Auto turn off display
+    if count == 200: # roughly the number of seconds before auto-off
         refresh = False
         count = 0
         subprocess.call('vcgencmd display_power 0', shell=True)
 
+# Originally from https://github.com/semicertain/Train-Times
+# Questions? Email: me [at] semicertain.com
+
+# If main loop is exited, quit program
 pygame.quit()
