@@ -23,6 +23,9 @@
 # For crontab startup procedure
 # os.chdir("Desktop")
 
+#########################################################################
+# Setup
+
 import datetime
 import requests
 import subprocess       # for terminal commands (turing screen off)
@@ -42,19 +45,28 @@ size = (WIDTH, HEIGHT)
 screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 pygame.display.set_caption("Train Times")
 
-# colors
+# Define constants for the graphics
+#   There are 7 lines of text and 9 spacers between them
+#   Text is twice as high as a spacer, so need 16 units
+SPACER = int(HEIGHT / 16) # needs to be an integer
+TEXT_H = SPACER * 2
+
+# Define lines upon which text will appear
+LINE1 = SPACER #10 # Current date and current time
+LINE2 = LINE1 + TEXT_H + SPACER
+LINE3 = LINE2 + TEXT_H + SPACER #200 # Station
+LINE4 = LINE3 + TEXT_H + SPACER #330 # Connection error
+LINE5 = LINE4 + TEXT_H + SPACER #400 # Track
+LINE6 = LINE5 + TEXT_H + SPACER #530 # NextTrain and Arrival Time
+LINE7 = LINE6 + TEXT_H + SPACER #660 # NextNextTrain and Arrival Time
+
+# Define colors
 BLACK = (0, 0, 0)
 YELLOW = (204, 184, 55)
 WHITE = (255, 255, 255)
 
-# lines of text
-LINE1 = 10 # Current date and current time
-LINE2 = 200 # Station
-LINE3 = 400 # Track
-LINE4 = 530 # NextTrain and Arrival Time
-LINE5 = 660 # NextNextTrain and Arrival Time
-
-# program 
+##########################################################################
+# Program 
 done = False
 refresh = True
 count = 0
@@ -115,10 +127,10 @@ while not done:
     connectionLost = font.render("CONNECTION LOST", True, WHITE)
  
     # Put the image of the text on the screen at 250x250
-    screen.blit(station, [0, LINE2])
-    screen.blit(track1, [0, LINE3])
+    screen.blit(station, [0, LINE3])
+    screen.blit(track1, [0, LINE5])
     if connection == False:
-        screen.blit(connectionLost, [0, LINE2+130])
+        screen.blit(connectionLost, [0, LINE4])
 
     # counter
     count = count + 1
@@ -146,21 +158,21 @@ while not done:
     
     # next trains
     nextTrain = font.render("GREEN     MINNEAPOLIS", True, YELLOW)
-    screen.blit(nextTrain, [0, LINE4])
+    screen.blit(nextTrain, [0, LINE6])
     nextNextTrain = font.render("GREEN     MINNEAPOLIS", True, YELLOW)
-    screen.blit(nextNextTrain, [0, LINE5])
+    screen.blit(nextNextTrain, [0, LINE7])
 
     # arrival times
     nextTime = font.render(firstTrain[0].upper(), True, YELLOW)
     text_rect1 = nextTime.get_rect()
     text_rect1.right = WIDTH-90
-    text_rect1.top = LINE4
+    text_rect1.top = LINE6
     screen.blit(nextTime, text_rect1)
     
     nextNextTime = font.render(secondTrain[0].upper(), True, YELLOW)
     text_rect2 = nextNextTime.get_rect()
     text_rect2.right = WIDTH-90
-    text_rect2.top = LINE5
+    text_rect2.top = LINE7
     screen.blit(nextNextTime, text_rect2)
 
 
