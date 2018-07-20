@@ -1,0 +1,15 @@
+[Unit]
+Description=Get IMS service running at boot
+After=mosquitto.service mysql.service
+
+[Service]
+ExecStart=/home/pi/Desktop/Train-Times/TrainTimes_v2.py
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=IMS
+User=pi
+Group=pi
+
+[Install]
+WantedBy=multi-user.target
