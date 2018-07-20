@@ -9,8 +9,8 @@
 # Questions? Email: me [at] semicertain.com
 
 # This code will turn your Raspberry Pi into a display showing the times 
-# for the next two westbound greenline trains coming to the Prospect Park 
-# station in Minneapolis. 
+#   for the next two westbound greenline trains coming to the Prospect  
+#   Park station in Minneapolis. 
 
 # The graphics work was done relying heavily on this resource:
 # http://programarcadegames.com/index.php?chapter=introduction_to_graphics
@@ -19,6 +19,16 @@
 # $ sudo apt-get install python3-lxml
 # $ pip3 install requests
 # $ pip3 install pygame
+
+# To boot this script on startup:
+#   Create a file named 'IMS.service' in /etc/systemd/system/
+#   The contents of this file can be found at the end of the script or at:
+#   https://github.com/semicertain/Train-Times/blob/master/IMS.service
+#   Note: root privileges required
+#   Enable
+#   $ sudo systemctl enable IMS.service
+#   Check status
+#   $ systemctl status IMS.service
 
 # For crontab startup procedure
 # os.chdir("Desktop")
@@ -202,3 +212,24 @@ while not done:
 
 # If main loop is exited, quit program
 pygame.quit()
+
+
+# Start up script
+#   Delete hashes and paste into 'IMS.service'
+#   Note: root privileges required
+
+#[Unit]
+#Description=Get IMS service running at boot
+#After=mosquitto.service mysql.service
+#
+#[Service]
+#ExecStart=/home/pi/Desktop/Train-Times/TrainTimes_v2.py
+#Restart=always
+#StandardOutput=syslog
+#StandardError=syslog
+#SyslogIdentifier=IMS
+#User=pi
+#Group=pi
+#
+#[Install]
+#WantedBy=multi-user.target
