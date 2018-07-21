@@ -127,8 +127,14 @@ I'm not sure what causes it, but once about every two weeks or so, the program w
 <a name="references"></a>
 ## Useful References
 
+[Reference page for making graphics in `pygame`](http://programarcadegames.com/index.php?chapter=introduction_to_graphics)
+
+[Scraping data using `xpath`](http://python-guide-pt-br.readthedocs.io/en/latest/scenarios/scrape/)
+
 [Finding the resolution of the connected display in python]
 (https://stackoverflow.com/questions/46008890/getting-physical-screen-size-in-python)
 
 [Setting a script to auto-run on startup]
 (https://www.raspberrypi.org/forums/viewtopic.php?t=200174`)
+
+[Turning the monitor on and off automatically](https://www.raspberrypi.org/forums/viewtopic.php?t=193430)
