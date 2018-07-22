@@ -131,10 +131,8 @@ I'm not sure what causes it, but once about every two weeks or so, the program w
 
 [Scraping data using `xpath`](http://python-guide-pt-br.readthedocs.io/en/latest/scenarios/scrape/)
 
-[Finding the resolution of the connected display in python]
-(https://stackoverflow.com/questions/46008890/getting-physical-screen-size-in-python)
+[Finding the resolution of the connected display in python](https://stackoverflow.com/questions/46008890/getting-physical-screen-size-in-python)
 
-[Setting a script to auto-run on startup]
-(https://www.raspberrypi.org/forums/viewtopic.php?t=200174`)
+[Setting a script to auto-run on startup](https://www.raspberrypi.org/forums/viewtopic.php?t=200174%60)
 
 [Turning the monitor on and off automatically](https://www.raspberrypi.org/forums/viewtopic.php?t=193430)
